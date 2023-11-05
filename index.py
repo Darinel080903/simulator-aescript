@@ -29,8 +29,11 @@ class IDESimulator:
         # Expresión regular para validar la estructura de la sentencia "iterar"
         iterar_pattern = r"iterar\s+\d+\s+veces\s+>>\s+[a-zA-Z]+\s*\+\s*1"
         
-        # Validar la declaración de variables, estructura de la función y la sentencia "iterar"
-        if re.match(variable_pattern, code) or re.match(function_pattern, code) or re.match(iterar_pattern, code):
+        # Expresión regular para validar la estructura de la sentencia "si"
+        si_pattern = r"si\s+[a-zA-Z]+\s*(>\s*|\s*<\s*)\d+\s*realiza\s*{\s*[a-zA-Z]+\s*[\+\-\/*]\s*\d+\s*;\s*}\s*"
+        
+        # Validar la declaración de variables, estructura de la función, sentencia "iterar" y sentencia "si"
+        if re.match(variable_pattern, code) or re.match(function_pattern, code) or re.match(iterar_pattern, code) or re.match(si_pattern, code):
             return True
 
         return False
