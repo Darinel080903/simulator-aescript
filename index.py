@@ -25,9 +25,12 @@ class IDESimulator:
         
         # Expresión regular para validar la estructura de la función y la palabra reservada "imprimir"
         function_pattern = r"funcion\s+[a-zA-Z]+\s*>>\s*{\s*[a-zA-Z]+\s*[\+\-\/*]\s*\d+\s*;\s*}\s*imprimir\(\s*[a-zA-Z]+\s*\);"
+
+        # Expresión regular para validar la estructura de la sentencia "iterar"
+        iterar_pattern = r"iterar\s+\d+\s+veces\s+>>\s+[a-zA-Z]+\s*\+\s*1"
         
-        # Validar la declaración de variables y la estructura de la función y la palabra reservada "imprimir"
-        if re.match(variable_pattern, code) or re.match(function_pattern, code):
+        # Validar la declaración de variables, estructura de la función y la sentencia "iterar"
+        if re.match(variable_pattern, code) or re.match(function_pattern, code) or re.match(iterar_pattern, code):
             return True
 
         return False
