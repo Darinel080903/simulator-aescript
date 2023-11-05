@@ -4,7 +4,7 @@ import re
 class IDESimulator:
     def __init__(self, root):
         self.root = root
-        self.root.title("IDE Simulator")
+        self.root.title("AESCRIPT")
         self.text_widget = tk.Text(root, wrap=tk.WORD, height=15, width=50)
         self.text_widget.pack(expand=tk.YES, fill=tk.BOTH)
         self.validation_button = tk.Button(root, text="Validar", command=self.validate_code)
@@ -17,25 +17,39 @@ class IDESimulator:
         if self.is_valid_code(code):
             self.result_label.config(text="Código válido")
         else:
-            self.result_label.config(text="Código inválido")
+            error_position = self.find_error_position(code)
+            self.result_label.config(text=f"Código inválido en la posición: {error_position}")
+
+    def find_error_position(self, code):
+        # Expresiones regulares para encontrar errores específicos en el código
+        error_patterns = [
+            r"(variable\s+[a-zA-Z]+\s*=\s*[\w\.-]+;)",
+            r"(funcion\s+[a-zA-Z]+\s*>>\s*{\s*[a-zA-Z]+\s*[\+\-\/*]\s*\d+\s*;\s*}\s*imprimir\(\s*[a-zA-Z]+\s*\);)",
+            r"(iterar\s+\d+\s+veces\s+>>\s+[a-zA-Z]+\s*\+\s*1)",
+            r"(si\s+[a-zA-Z]+\s*(>\s*|\s*<\s*)\d+\s*realiza\s*{\s*[a-zA-Z]+\s*[\+\-\/*]\s*\d+\s*;\s*}\s*)",
+            r"(funcion\s+[a-zA-Z]+\s+correr\s*>>\s*{\s*>>[a-zA-Z]+\s*;\s*}\s*)"
+        ]
+
+        # Verificar cada patrón de error y encontrar la posición del error
+        for pattern in error_patterns:
+            match = re.search(pattern, code)
+            if match is None:
+                continue
+            error_position = match.start()
+            return error_position
+
+        # Si no se encuentra ningún error específico, devolver la posición del primer carácter no válido
+        return len(code.strip())
 
     def is_valid_code(self, code):
-        # Expresión regular para validar la declaración de variables con cualquier tipo de valor
+        # Expresiones regulares para validar la declaración de variables y estructuras de funciones/sentencias
         variable_pattern = r"variable\s+[a-zA-Z]+\s*=\s*[\w\.-]+;"
-        
-        # Expresión regular para validar la estructura de la función y la palabra reservada "imprimir"
         function_pattern = r"funcion\s+[a-zA-Z]+\s*>>\s*{\s*[a-zA-Z]+\s*[\+\-\/*]\s*\d+\s*;\s*}\s*imprimir\(\s*[a-zA-Z]+\s*\);"
-
-        # Expresión regular para validar la estructura de la sentencia "iterar"
         iterar_pattern = r"iterar\s+\d+\s+veces\s+>>\s+[a-zA-Z]+\s*\+\s*1"
-        
-        # Expresión regular para validar la estructura de la sentencia "si"
         si_pattern = r"si\s+[a-zA-Z]+\s*(>\s*|\s*<\s*)\d+\s*realiza\s*{\s*[a-zA-Z]+\s*[\+\-\/*]\s*\d+\s*;\s*}\s*"
-        
-        # Expresión regular para validar la estructura de la función "principal"
         principal_pattern = r"funcion\s+[a-zA-Z]+\s+correr\s*>>\s*{\s*>>[a-zA-Z]+\s*;\s*}\s*"
-        
-        # Validar la declaración de variables, estructura de la función, sentencia "iterar", sentencia "si" y función "principal"
+
+        # Validar la declaración de variables, estructura de la función y sentencias
         if re.match(variable_pattern, code) or re.match(function_pattern, code) or re.match(iterar_pattern, code) or re.match(si_pattern, code) or re.match(principal_pattern, code):
             return True
 
